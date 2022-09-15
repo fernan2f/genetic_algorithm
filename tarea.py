@@ -8,42 +8,50 @@ mutation = 5
 iteration = 100
 error = ""
 
+#Para inicializar la población inicial , size = numero de reinas
 def starterPob(size):
     # my_array = np.arange(0, size, 1, dtype=int)
-    my_array = [4, 3, 2, 0, 1]
+    my_array = [3,1,2,0,4]
     # np.random.shuffle(my_array)
     return my_array
 
+#Calcula el fitness de todos los individuos y retorna un array 
 def fitness(array):
+    fitnessArray = np.zeros(len(array),dtype=int) #Array que contiene las colisiones de cada individuo
     my_matrix = np.zeros((len(array),len(array)), dtype=int)
     for n in range(len(array)):
         my_matrix[array[n]][n] = 1;
     
-    #En vez de los print hay que sumar +1 ya que es cúando ocurrió una colisión
+
     for n in range(len(array)):
         values = [array[n],n]  # 0 es fila, 1 es columna
         print(values)
-        for x in range(1,len(array)-1):
+        for x in range(1,len(array)):
             if(values[0]-x >= 0 and values[1]+x <= len(array)-1):
                 # sup derecha
                 if(my_matrix[values[0]-x][values[1]+x]== 1):
+                    fitnessArray[n]+=1
                     print("sup derecha ",values," con ",values[0]-x,values[1]+x) 
                     
             if(values[0]+x <= len(array)-1  and values[1]-x >= 0):
                 # inf izq
                 if(my_matrix[values[0]+x][values[1]-x]== 1):
+                    fitnessArray[n]+=1
                     print("inf izq ",values," con ",values[0]+x,values[1]-x)
                     
             if(values[0]-x >=0  and values[1]-x >= 0):
                 # sup izq
                 if(my_matrix[values[0]-x][values[1]-x]== 1):
+                    fitnessArray[n]+=1
                     print("sup izq ",values," con ",values[0]-x,values[1]-x)
                     
             if(values[0]+x <= len(array)-1  and values[1]+x <= len(array)-1 ):
-                # sup izq
+                # inf der
                 if(my_matrix[values[0]+x][values[1]+x]== 1):
+                    fitnessArray[n]+=1
                     print("inf der ",values," con ",values[0]+x,values[1]+x)
-                    
+    print(fitnessArray)
+    return fitnessArray
     # print(my_matrix.reshape((len(array),len(array))))
     
  
