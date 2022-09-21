@@ -9,54 +9,56 @@ iteration = 100
 error = ""
 
 #Para inicializar la población inicial , size = numero de reinas
-def starterPob(size):
-    # my_array = np.arange(0, size, 1, dtype=int)
-    my_array = [3,1,2,0,4]
-    # np.random.shuffle(my_array)
-    return my_array
+def starterPob(populationSize, boardSize):
+    i=0
+    populationArray = []
+    while(i < populationSize):
+        my_array = np.arange(0, boardSize, 1, dtype=int)
+        np.random.shuffle(my_array)
+        populationArray.append(my_array)
+        i+=1
+    
+    return populationArray
 
 #Calcula el fitness de todos los individuos y retorna un array 
 def fitness(array):
     fitnessArray = np.zeros(len(array),dtype=int) #Array que contiene las colisiones de cada individuo
     my_matrix = np.zeros((len(array),len(array)), dtype=int)
+    
     for n in range(len(array)):
         my_matrix[array[n]][n] = 1;
     
-
     for n in range(len(array)):
         values = [array[n],n]  # 0 es fila, 1 es columna
-        print(values)
         for x in range(1,len(array)):
             if(values[0]-x >= 0 and values[1]+x <= len(array)-1):
                 # sup derecha
                 if(my_matrix[values[0]-x][values[1]+x]== 1):
                     fitnessArray[n]+=1
-                    print("sup derecha ",values," con ",values[0]-x,values[1]+x) 
+                    # print("sup derecha ",values," con ",values[0]-x,values[1]+x) 
                     
             if(values[0]+x <= len(array)-1  and values[1]-x >= 0):
                 # inf izq
                 if(my_matrix[values[0]+x][values[1]-x]== 1):
                     fitnessArray[n]+=1
-                    print("inf izq ",values," con ",values[0]+x,values[1]-x)
+                    # print("inf izq ",values," con ",values[0]+x,values[1]-x)
                     
             if(values[0]-x >=0  and values[1]-x >= 0):
                 # sup izq
                 if(my_matrix[values[0]-x][values[1]-x]== 1):
                     fitnessArray[n]+=1
-                    print("sup izq ",values," con ",values[0]-x,values[1]-x)
+                    # print("sup izq ",values," con ",values[0]-x,values[1]-x)
                     
             if(values[0]+x <= len(array)-1  and values[1]+x <= len(array)-1 ):
                 # inf der
                 if(my_matrix[values[0]+x][values[1]+x]== 1):
                     fitnessArray[n]+=1
-                    print("inf der ",values," con ",values[0]+x,values[1]+x)
-    print(fitnessArray)
-    return fitnessArray
+                    # print("inf der ",values," con ",values[0]+x,values[1]+x)
+    return sum(fitnessArray)
     # print(my_matrix.reshape((len(array),len(array))))
     
- 
 
-print(" \n 1. Tamaño población (Actual {}) \n 2. Valor de la semilla (Actual {}) \n 3. Tamaño tablero (Actual {}) \n 4. Probabilidad cruza (Actual {}%) \n 5. Probabilidad mutación (Actual {}%) \n 6. Cantidad iteraciones (Actual {}) \n 0. Salir del menú"  .format(populationSize,seed,boardSize,crossover,mutation, iteration))
+print(" \n 1. Tamaño población (Actual {}) \n 2. Valor de la semilla (Actual {}) \n 3. Tamaño tablero (Actual {}) \n 4. Probabilidad cruza (Actual {}%) \n 5. Probabilidad mutación (Actual {}%) \n 6. Cantidad iteraciones (Actual {}) \n 0. Ejecutar código"  .format(populationSize,seed,boardSize,crossover,mutation, iteration))
 command = input('Seleccione una opción: ')
 
 def isNumber(value):
@@ -101,13 +103,13 @@ while command != '0':
                 iteration = 100
         case other:
             error = "No has ingresado una opción valida"
-    print(" \n 1. Tamaño población (Actual {}) \n 2. Valor de la semilla (Actual {}) \n 3. Tamaño tablero (Actual {}) \n 4. Probabilidad cruza (Actual {}%) \n 5. Probabilidad mutación (Actual {}%) \n 6. Cantidad iteraciones (Actual {}) \n 0. Salir del menú"  .format(populationSize,seed,boardSize,crossover,mutation, iteration))
+    print(" \n 1. Tamaño población (Actual {}) \n 2. Valor de la semilla (Actual {}) \n 3. Tamaño tablero (Actual {}) \n 4. Probabilidad cruza (Actual {}%) \n 5. Probabilidad mutación (Actual {}%) \n 6. Cantidad iteraciones (Actual {}) \n 0. Ejecutar código"  .format(populationSize,seed,boardSize,crossover,mutation, iteration))
     print(error)
     command = input('Seleccione un valor a modificar: ')
 
 
 
 
-populationArray = starterPob(populationSize)
+population = starterPob(populationSize, boardSize)
 
-fitness(populationArray)
+print(population)
