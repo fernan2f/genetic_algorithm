@@ -1,23 +1,40 @@
 import numpy as np
+import sys
+import random
 
-populationSize = 5
-seed = 2
-boardSize = 5
-crossover = 5
-mutation = 5
-iteration = 100
-error = ""
+
+if len(sys.argv) == 7 :
+    seed = sys.argv[1]
+    boardSize = int(sys.argv[2])
+    populationSize = int(sys.argv[3])
+    probCruza = sys.argv[4]
+    probMutation = sys.argv[5]
+    numIteration = int(sys.argv[6]) 
+else:
+    print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
+    sys.exit()
+
+random.seed(seed)
+
+def Valuebinary():
+    value = random.random()
+    return value
+
+def Value_N(x):
+    value = random.randint(1,x)
+    print(value)
+    return value  
 
 #Para inicializar la población inicial , size = numero de reinas
 def starterPob(populationSize, boardSize):
     i=0
-    populationArray = []
+    populationArray = np.empty([populationSize,boardSize],dtype=int)
     while(i < populationSize):
         my_array = np.arange(0, boardSize, 1, dtype=int)
         np.random.shuffle(my_array)
-        populationArray.append(my_array)
+        #populationArray.append(my_array)
+        populationArray[i] = my_array
         i+=1
-    
     return populationArray
 
 #Calcula el fitness de todos los individuos y retorna un array 
@@ -26,12 +43,12 @@ def fitness(array):
     my_matrix = np.zeros((len(array),len(array)), dtype=int)
     
     for n in range(len(array)):
-        my_matrix[array[n]][n] = 1;
+        my_matrix[array[n]][n] = 1
     
     for n in range(len(array)):
         values = [array[n],n]  # 0 es fila, 1 es columna
         for x in range(1,len(array)):
-            if(values[0]-x >= 0 and values[1]+x <= len(array)-1):
+            if((values[0]-x >= 0 and values[1]+x) <= len(array)-1):
                 # sup derecha
                 if(my_matrix[values[0]-x][values[1]+x]== 1):
                     fitnessArray[n]+=1
@@ -54,62 +71,55 @@ def fitness(array):
                 if(my_matrix[values[0]+x][values[1]+x]== 1):
                     fitnessArray[n]+=1
                     # print("inf der ",values," con ",values[0]+x,values[1]+x)
-    return sum(fitnessArray)
+    return fitnessArray
     # print(my_matrix.reshape((len(array),len(array))))
-    
 
-print(" \n 1. Tamaño población (Actual {}) \n 2. Valor de la semilla (Actual {}) \n 3. Tamaño tablero (Actual {}) \n 4. Probabilidad cruza (Actual {}%) \n 5. Probabilidad mutación (Actual {}%) \n 6. Cantidad iteraciones (Actual {}) \n 0. Ejecutar código"  .format(populationSize,seed,boardSize,crossover,mutation, iteration))
-command = input('Seleccione una opción: ')
+def arrayFitness(poblacion):
+    arrayFitness = np.empty(populationSize)
+    for i in range(0,populationSize):
+        collisions = 0
+        for j in range(0,boardSize-1):
+            for k in range(j+1,boardSize):
 
-def isNumber(value):
-    try:
-        float(value)
-    except ValueError:
-        return bool(False)
-    return bool(True)
+                if abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 0 or abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 1:
+                    collisions = collisions + 1
+        arrayFitness[i] = collisions
+    print(arrayFitness)
+    return arrayFitness
 
-while command != '0':
-    error = ""
-    match command:
-        case '1':
-            populationSize = int(input('Ingrese el tamaño de la población: '))
-            if not isNumber(populationSize):
-                error = "No has ingresado un número"
-                populationSize = 5 
-        case '2':
-            seed = int(input('Ingrese el valor de la semilla: '))
-            if not isNumber(seed):
-                error = "No has ingresado un número"
-                seed = 2
-        case '3':
-            boardSize = int(input('Ingrese el tamaño del tablero: '))
-            if not isNumber(boardSize):
-                error = "No has ingresado un número"
-                boardSize = 5
-        case '4':
-            crossover = int(input('Ingrese la probabilidad de cruza: '))
-            if not isNumber(crossover):
-                error = "No has ingresado un número"
-                crossover = 5
-        case '5':
-            mutation = int(input('Ingrese la probabilidad de mutación: '))
-            if not isNumber(mutation):
-                error = "No has ingresado un número"
-                mutation = 5
-        case '6':
-            iteration = int(input('Ingrese la cantidad de iteraciones: '))
-            if not isNumber(iteration):
-                error = "No has ingresado un número"
-                iteration = 100
-        case other:
-            error = "No has ingresado una opción valida"
-    print(" \n 1. Tamaño población (Actual {}) \n 2. Valor de la semilla (Actual {}) \n 3. Tamaño tablero (Actual {}) \n 4. Probabilidad cruza (Actual {}%) \n 5. Probabilidad mutación (Actual {}%) \n 6. Cantidad iteraciones (Actual {}) \n 0. Ejecutar código"  .format(populationSize,seed,boardSize,crossover,mutation, iteration))
-    print(error)
-    command = input('Seleccione un valor a modificar: ')
+def arrayProbCruza(arrayFitness):
+    arrayProbCruza = np.empty(populationSize)
+    totalInv = np.sum(arrayFitness)
+    for i in range(0,populationSize):
+        arrayProbCruza[i] = 1/(arrayProbCruza[i]/totalInv)
+    totalReal = np.sum(arrayProbCruza)
+    for i in range(0,populationSize):
+        arrayProbCruza[i] = arrayProbCruza[i]/totalReal
+    print(arrayProbCruza)
 
+def getIndexCruza(random, arrayProbCruza):
+    acc = 0 
+    for i in range(0, populationSize):
+        acc = acc + arrayProbCruza[i]
+        if random <= acc:
+            return i
 
+def cruza(p_1, p_2):
+    corte = Value_N(boardSize)
+    h_1 = np.concatenate((p_1[:corte],p_2[corte:]))
+    h_2 = np.concatenate((p_2[:corte],p_1[corte:]))
+    return np.vstack((h_1,h_2))
 
+Poblacion = starterPob(populationSize,boardSize)
+FitnessPoblacion = arrayFitness(Poblacion)
+Probcruz = arrayProbCruza(FitnessPoblacion)
 
-population = starterPob(populationSize, boardSize)
+iterations = 0
 
-print(population)
+while (0 in FitnessPoblacion) or (iterations < numIteration):
+    for i in range(0,populationSize):
+        print(Valuebinary())
+    iterations = iterations + 1
+
+print(Poblacion)
+
