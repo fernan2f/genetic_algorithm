@@ -14,6 +14,7 @@ else:
     print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
     sys.exit()
 
+
 random.seed(seed)
 
 def Valuebinary():
@@ -93,15 +94,15 @@ def arrayProbCruza(arrayFitness):
     for i in range(0,populationSize):
         arrayProbCruza[i] = 1/(arrayProbCruza[i]/totalInv)
     totalReal = np.sum(arrayProbCruza)
+    acc = 0
     for i in range(0,populationSize):
-        arrayProbCruza[i] = arrayProbCruza[i]/totalReal
+        acc = acc + arrayProbCruza[i]/totalReal
+        arrayProbCruza[i] = acc
     print(arrayProbCruza)
 
 def getIndexCruza(random, arrayProbCruza):
-    acc = 0 
     for i in range(0, populationSize):
-        acc = acc + arrayProbCruza[i]
-        if random <= acc:
+        if random <= arrayProbCruza[i]:
             return i
 
 def cruza(p_1, p_2):
