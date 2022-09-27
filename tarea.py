@@ -118,7 +118,7 @@ def cruza(p_1, p_2):
 
 
 def mutation(test_list):
-    ## obtenemos repeditos  
+    ## valores repeditos  
     u, c = np.unique(test_list, return_counts=True)
     repetidos = u[c > 1]
     ## valores restantes
@@ -140,12 +140,23 @@ def mutation(test_list):
             print(test_list)
             return test_list
             
+test_list = np.array([1,2,3,3,4,5,5,6,6,6,10,9,7,8])
 
-Poblacion = starterPob(populationSize,boardSize)
-FitnessPoblacion = arrayFitness(Poblacion)
-Probcruz = arrayProbCruza(FitnessPoblacion)
-mutation(Poblacion[0])
-iterations = 0
+
+def swap(array):
+    index1 = Value_0_N(populationSize)
+    index2 = Value_0_N(populationSize)
+    array[index1], array[index2] = array[index2], array[index1]
+    return array
+
+
+print(test_list)
+print(swap(test_list))
+#Poblacion = starterPob(populationSize,boardSize)
+#FitnessPoblacion = arrayFitness(Poblacion)
+#Probcruz = arrayProbCruza(FitnessPoblacion)
+#mutation(Poblacion[0])
+#iterations = 0
 
 
 while (0 in FitnessPoblacion) or (iterations < numIteration):
