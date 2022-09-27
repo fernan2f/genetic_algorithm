@@ -26,6 +26,11 @@ def Value_N(x):
     print(value)
     return value  
 
+def Value_0_N(x):
+    value = random.randint(0,x)
+    print(value)
+    return value 
+
 #Para inicializar la población inicial , size = numero de reinas
 def starterPob(populationSize, boardSize):
     i=0
@@ -111,11 +116,37 @@ def cruza(p_1, p_2):
     h_2 = np.concatenate((p_2[:corte],p_1[corte:]))
     return np.vstack((h_1,h_2))
 
+
+def mutation(test_list):
+    ## obtenemos repeditos  
+    u, c = np.unique(test_list, return_counts=True)
+    repetidos = u[c > 1]
+    ## valores restantes
+    res = np.array(list(set(range(len(test_list))) - set(test_list)))
+    for i in repetidos:
+        y = np.where(test_list== i)
+        y = y[0]
+        rango = y.size       
+        for j in range(0,rango-1): 
+            ## seleccion posicion repetido al azar
+            Select = Value_0_N(rango-1) 
+            position = y[Select]
+            y = np.delete(y ,Select)
+            ## seleccionar valor faltante
+            indexRest = Value_0_N(len(res))
+            valueRest = res[indexRest-1]
+            res = np.delete(res ,indexRest-1)
+            test_list[position] = valueRest
+            print(test_list)
+            return test_list
+            
+
 Poblacion = starterPob(populationSize,boardSize)
 FitnessPoblacion = arrayFitness(Poblacion)
 Probcruz = arrayProbCruza(FitnessPoblacion)
-
+mutation(Poblacion[0])
 iterations = 0
+
 
 while (0 in FitnessPoblacion) or (iterations < numIteration):
     for i in range(0,populationSize):
