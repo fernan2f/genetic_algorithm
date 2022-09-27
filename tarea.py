@@ -150,13 +150,11 @@ def swap(array):
     return array
 
 
-print(test_list)
-print(swap(test_list))
-#Poblacion = starterPob(populationSize,boardSize)
-#FitnessPoblacion = arrayFitness(Poblacion)
-#Probcruz = arrayProbCruza(FitnessPoblacion)
-#mutation(Poblacion[0])
-#iterations = 0
+Poblacion = starterPob(populationSize,boardSize)
+FitnessPoblacion = arrayFitness(Poblacion)
+Probcruz = arrayProbCruza(FitnessPoblacion)
+mutation(Poblacion[0])
+iterations = 0
 
 
 while (0 in FitnessPoblacion) or (iterations < numIteration):
