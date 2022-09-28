@@ -110,40 +110,46 @@ def getIndexCruza(random, arrayProbCruza):
         if random <= arrayProbCruza[i]:
             return i
 
-def cruza(p_1, p_2):
+def cruzover(p_1, p_2):
     corte = Value_N(boardSize)
     h_1 = np.concatenate((p_1[:corte],p_2[corte:]))
     h_2 = np.concatenate((p_2[:corte],p_1[corte:]))
     return np.vstack((h_1,h_2))
 
 
-def mutation(test_list):
+def rectification(test_list):
+
     ## valores repeditos  
     u, c = np.unique(test_list, return_counts=True)
     repetidos = u[c > 1]
+
     ## valores restantes
     res = np.array(list(set(range(len(test_list))) - set(test_list)))
+
     for i in repetidos:
         y = np.where(test_list== i)
         y = y[0]
         rango = y.size       
-        for j in range(0,rango-1): 
+        for j in range(0,rango-1):
+            print(res) 
             ## seleccion posicion repetido al azar
             Select = Value_0_N(rango-1) 
             position = y[Select]
             y = np.delete(y ,Select)
             ## seleccionar valor faltante
             indexRest = Value_0_N(len(res))
-            valueRest = res[indexRest-1]
-            res = np.delete(res ,indexRest-1)
+            valueRest = res[indexRest]
+            res = np.delete(res ,indexRest)
             test_list[position] = valueRest
             print(test_list)
-            return test_list
+    
+    return test_list
             
-test_list = np.array([1,2,3,3,4,5,5,6,6,6,10,9,7,8])
+test_list = np.array([1,2,3,3,4,5,5,6,6,6,10,10,9,7,8])
 
 
-def swap(array):
+
+def mutation(array):
     index1 = Value_0_N(populationSize)
     index2 = Value_0_N(populationSize)
     array[index1], array[index2] = array[index2], array[index1]
@@ -153,7 +159,6 @@ def swap(array):
 Poblacion = starterPob(populationSize,boardSize)
 FitnessPoblacion = arrayFitness(Poblacion)
 Probcruz = arrayProbCruza(FitnessPoblacion)
-mutation(Poblacion[0])
 iterations = 0
 
 
@@ -163,4 +168,5 @@ while (0 in FitnessPoblacion) or (iterations < numIteration):
     iterations = iterations + 1
 
 print(Poblacion)
+
 
