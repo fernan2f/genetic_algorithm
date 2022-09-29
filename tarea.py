@@ -1,4 +1,5 @@
 from pydoc import describe
+from xml.dom.minidom import Childless
 import numpy as np
 import sys
 import random
@@ -119,10 +120,8 @@ def rectification(test_list):
     ## valores repeditos  
     u, c = np.unique(test_list, return_counts=True)
     repetidos = u[c > 1]
-
     ## valores restantes
     res = np.array(list(set(range(len(test_list))) - set(test_list)))
-
     for i in repetidos:
         y = np.where(test_list== i)
         y = y[0]
@@ -139,7 +138,6 @@ def rectification(test_list):
             res = np.delete(res ,indexRest)
             test_list[position] = valueRest
             print(test_list)
-    
     return test_list
             
 test_list = np.array([1,2,3,3,4,5,5,6,6,6,10,10,9,7,8])
@@ -157,6 +155,12 @@ def mutation(array):
     print("array salida ", array)
     return array
 
+def adjustPoblation(maintainPob , childPob):
+    poblation = np.vstack((maintainPob,childPob))
+    for i in range(0, len(childPob-1)):
+        j = Value_0_N(0,len(poblation-1))
+        poblation = np.delete(poblation[j])
+    return poblation
 
 Poblacion = starterPob(populationSize,boardSize)
 iterations = 0
