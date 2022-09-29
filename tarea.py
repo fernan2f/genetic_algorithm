@@ -1,3 +1,4 @@
+from pydoc import describe
 import numpy as np
 import sys
 import random
@@ -7,8 +8,8 @@ if len(sys.argv) == 7 :
     seed = sys.argv[1]
     boardSize = int(sys.argv[2])
     populationSize = int(sys.argv[3])
-    probCruza = sys.argv[4]
-    probMutation = sys.argv[5]
+    probCruza = float(sys.argv[4])
+    probMutation = float(sys.argv[5])
     numIteration = int(sys.argv[6]) 
 else:
     print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
@@ -17,18 +18,16 @@ else:
 
 random.seed(seed)
 
-def Valuebinary():
+def ValueRandom():
     value = random.random()
     return value
 
 def Value_N(x):
     value = random.randint(1,x)
-    print(value)
     return value  
 
 def Value_0_N(x):
     value = random.randint(0,x)
-    print(value)
     return value 
 
 #Para inicializar la población inicial , size = numero de reinas
@@ -86,11 +85,9 @@ def arrayFitness(poblacion):
         collisions = 0
         for j in range(0,boardSize-1):
             for k in range(j+1,boardSize):
-
                 if abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 0 or abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 1:
                     collisions = collisions + 1
         arrayFitness[i] = collisions
-    print(arrayFitness)
     return arrayFitness
 
 def arrayProbCruza(arrayFitness):
@@ -103,7 +100,7 @@ def arrayProbCruza(arrayFitness):
     for i in range(0,populationSize):
         acc = acc + arrayProbCruza[i]/totalReal
         arrayProbCruza[i] = acc
-    print(arrayProbCruza)
+    return arrayProbCruza
 
 def getIndexCruza(random, arrayProbCruza):
     for i in range(0, populationSize):
@@ -150,23 +147,47 @@ test_list = np.array([1,2,3,3,4,5,5,6,6,6,10,10,9,7,8])
 
 
 def mutation(array):
-    index1 = Value_0_N(populationSize)
-    index2 = Value_0_N(populationSize)
+    print("array entrada", array)
+    index1 = Value_0_N(boardSize-1)
+    index2 = Value_0_N(boardSize-1)
+    while index1 != index2:
+        index1 = Value_0_N(boardSize-1)
+        index2 = Value_0_N(boardSize-1)
     array[index1], array[index2] = array[index2], array[index1]
+    print("array salida ", array)
     return array
 
 
 Poblacion = starterPob(populationSize,boardSize)
-FitnessPoblacion = arrayFitness(Poblacion)
-Probcruz = arrayProbCruza(FitnessPoblacion)
 iterations = 0
-
+FitnessPoblacion = arrayFitness(Poblacion)  
 
 while (0 in FitnessPoblacion) or (iterations < numIteration):
+    descendencia = None
+    FitnessPoblacion = arrayFitness(Poblacion)  
+    ProbCruza = arrayProbCruza(FitnessPoblacion)     
     for i in range(0,populationSize):
-        print(Valuebinary())
+        index_p1 = 0
+        index_p2 = 0
+        while index_p1 == index_p2:
+            prob = ValueRandom()
+            index_p1 = getIndexCruza(prob,ProbCruza)
+            prob = ValueRandom()
+            index_p2 = getIndexCruza(prob,ProbCruza)
+        cruza = cruzover(Poblacion[index_p1],Poblacion[index_p2])
+        if descendencia is None:
+            descendencia = cruza
+        else:
+            descendencia = np.concatenate((descendencia,cruza))
+        randomMutation = ValueRandom()
+        if randomMutation <= probMutation:
+            print(descendencia)
+            childMutate = Value_0_N(boardSize)
+            print(childMutate)
+            descendencia[childMutate] = mutation(descendencia[childMutate])
+            print(descendencia)
+        print(" ")
     iterations = iterations + 1
 
-print(Poblacion)
 
 
