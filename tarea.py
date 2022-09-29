@@ -115,6 +115,7 @@ def cruzover(p_1, p_2):
     return np.vstack((h_1,h_2))
 
 
+
 def rectification(test_list):
 
     ## valores repeditos  
