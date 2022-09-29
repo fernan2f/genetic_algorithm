@@ -85,7 +85,7 @@ def arrayFitness(poblacion):
         collisions = 0
         for j in range(0,boardSize-1):
             for k in range(j+1,boardSize):
-                if abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 0 or abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 1:
+                if abs(j-k)-abs(poblacion[i][j]-poblacion[i][k]) == 0 :
                     collisions = collisions + 1
         arrayFitness[i] = collisions
     return arrayFitness
@@ -147,9 +147,12 @@ def mutation(array):
 Poblacion = starterPob(populationSize,boardSize)
 iterations = 0
 FitnessPoblacion = arrayFitness(Poblacion)  
-
-while (0 in FitnessPoblacion) or (iterations < numIteration):
+print(0 in FitnessPoblacion)
+while (iterations < numIteration):
+    if 0 in FitnessPoblacion:
+        break
     descendencia = []
+    print(0 in FitnessPoblacion)
     FitnessPoblacion = arrayFitness(Poblacion)  
     ProbCruza = arrayProbCruza(FitnessPoblacion)     
     while len(descendencia) < populationSize:
@@ -176,7 +179,6 @@ while (0 in FitnessPoblacion) or (iterations < numIteration):
     Poblacion = descendencia
     FitnessPoblacion = arrayFitness(Poblacion)
     iterations = iterations + 1
-print(arrayFitness(np.array([[1,3,0,2],[1,3,0,2]])))
-
-
+print(FitnessPoblacion)
+print(Poblacion)
 
