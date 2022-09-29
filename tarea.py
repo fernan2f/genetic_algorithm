@@ -150,7 +150,7 @@ def mutation(array):
     print("array entrada", array)
     index1 = Value_0_N(boardSize-1)
     index2 = Value_0_N(boardSize-1)
-    while index1 != index2:
+    while index1 == index2:
         index1 = Value_0_N(boardSize-1)
         index2 = Value_0_N(boardSize-1)
     array[index1], array[index2] = array[index2], array[index1]
