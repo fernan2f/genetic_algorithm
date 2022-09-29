@@ -4,23 +4,17 @@ import numpy as np
 import sys
 import random
 
-seed = 1 
-boardSize = 4 
-populationSize = 5 
-probMutation = 0.5 
-probCruza = 0.5 
-numIteration = 1
 
-#if len(sys.argv) == 7 :
-#    seed = sys.argv[1]
-#    boardSize = int(sys.argv[2])
-#    populationSize = int(sys.argv[3])
-#    probCruza = float(sys.argv[4])
-#    probMutation = float(sys.argv[5])
-#    numIteration = int(sys.argv[6]) 
-#else:
-#    print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
-#    sys.exit()
+if len(sys.argv) == 7 :
+   seed = sys.argv[1]
+   boardSize = int(sys.argv[2])
+   populationSize = int(sys.argv[3])
+   probCruza = float(sys.argv[4])
+   probMutation = float(sys.argv[5])
+   numIteration = int(sys.argv[6]) 
+else:
+   print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
+   sys.exit()
 
 random.seed(seed)
 
@@ -139,47 +133,50 @@ def rectification(test_list):
             valueRest = res[indexRest]
             res = np.delete(res ,indexRest)
             test_list[position] = valueRest
-            print(test_list)
     return test_list
             
 def mutation(array):
-    print("array entrada", array)
     index1 = Value_0_N(boardSize-1)
     index2 = Value_0_N(boardSize-1)
     while index1 == index2:
         index1 = Value_0_N(boardSize-1)
         index2 = Value_0_N(boardSize-1)
     array[index1], array[index2] = array[index2], array[index1]
-    print("array salida ", array)
     return array
-
-
 
 Poblacion = starterPob(populationSize,boardSize)
 iterations = 0
 FitnessPoblacion = arrayFitness(Poblacion)  
 
-
-
 while (0 in FitnessPoblacion) or (iterations < numIteration):
-    descendencia = None
+    descendencia = []
     FitnessPoblacion = arrayFitness(Poblacion)  
     ProbCruza = arrayProbCruza(FitnessPoblacion)     
-    index_p1 = 0
-    index_p2 = 0
-    while index_p1 == index_p2:
-        prob = ValueRandom()
-        index_p1 = getIndexCruza(prob,ProbCruza)
-        prob = ValueRandom()
-        index_p2 = getIndexCruza(prob,ProbCruza)
-    cruza = cruzover(Poblacion[index_p1],Poblacion[index_p2])
-    print(cruza)
-    for i in range(0, np.size(cruza,0)):
-        cruza[i] = rectification(cruza[i])
-    print(cruza)
-
+    while len(descendencia) < populationSize:
+        randomCruza = ValueRandom()
+        if randomCruza <= probCruza:
+            index_p1 = 0
+            index_p2 = 0
+            while index_p1 == index_p2:
+                prob = ValueRandom()
+                index_p1 = getIndexCruza(prob,ProbCruza)
+                prob = ValueRandom()
+                index_p2 = getIndexCruza(prob,ProbCruza)
+            cruza = cruzover(Poblacion[index_p1],Poblacion[index_p2])
+            for i in range(0, np.size(cruza,0)):
+                cruza[i] = rectification(cruza[i])
+            randomMutation = ValueRandom()
+            if randomMutation <= probMutation:
+                childMutate = Value_0_N(len(cruza)-1)
+                cruza[childMutate] = mutation(cruza[childMutate])
+            if(len(descendencia)==0):
+                descendencia = cruza
+            else:
+                descendencia = np.vstack((descendencia,cruza))
+    Poblacion = descendencia
+    FitnessPoblacion = arrayFitness(Poblacion)
     iterations = iterations + 1
-
+print(arrayFitness(np.array([[1,3,0,2],[1,3,0,2]])))
 
 
 
