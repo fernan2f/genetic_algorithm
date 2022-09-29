@@ -115,7 +115,29 @@ def cruzover(p_1, p_2):
     return np.vstack((h_1,h_2))
 
 
-
+def readjustment(poblation,iteration):
+    fitnes = arrayFitness(poblation)
+    print(fitnes)
+    for i in range(0,iteration):
+        #obtener mayor valor de fitnes
+        max_value = max(fitnes)
+        # buscar posiciones 
+        max_index = np.where(fitnes == max_value)
+        # si exite mas de 1 fitnes igual seleccionar random
+        if(max_index[0].size > 1):
+            random = Value_0_N(max_index[0].size-1)
+            index = max_index[0][random]
+        else:
+           index = max_index[0]
+        
+        ## eliminamos 
+        fitnes = np.delete(fitnes, index)
+        poblation = np.delete(poblation, index, axis=0)
+  
+       
+    print(poblation)
+    return poblation
+    
 def rectification(test_list):
 
     ## valores repeditos  
