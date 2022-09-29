@@ -4,18 +4,23 @@ import numpy as np
 import sys
 import random
 
+seed = 1 
+boardSize = 4 
+populationSize = 5 
+probMutation = 0.5 
+probCruza = 0.5 
+numIteration = 1
 
-if len(sys.argv) == 7 :
-    seed = sys.argv[1]
-    boardSize = int(sys.argv[2])
-    populationSize = int(sys.argv[3])
-    probCruza = float(sys.argv[4])
-    probMutation = float(sys.argv[5])
-    numIteration = int(sys.argv[6]) 
-else:
-    print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
-    sys.exit()
-
+#if len(sys.argv) == 7 :
+#    seed = sys.argv[1]
+#    boardSize = int(sys.argv[2])
+#    populationSize = int(sys.argv[3])
+#    probCruza = float(sys.argv[4])
+#    probMutation = float(sys.argv[5])
+#    numIteration = int(sys.argv[6]) 
+#else:
+#    print('Formato de argumentos ingresados no es válido: <Valor de la semilla> <Tamaño del tablero> <Tamaño de la población> <Probabilidad de cruza> <Probabilidad de mutación> <Número de iteraciones>')
+#    sys.exit()
 
 random.seed(seed)
 
@@ -113,33 +118,8 @@ def cruzover(p_1, p_2):
     h_1 = np.concatenate((p_1[:corte],p_2[corte:]))
     h_2 = np.concatenate((p_2[:corte],p_1[corte:]))
     return np.vstack((h_1,h_2))
-
-
-def readjustment(poblation,iteration):
-    fitnes = arrayFitness(poblation)
-    print(fitnes)
-    for i in range(0,iteration):
-        #obtener mayor valor de fitnes
-        max_value = max(fitnes)
-        # buscar posiciones 
-        max_index = np.where(fitnes == max_value)
-        # si exite mas de 1 fitnes igual seleccionar random
-        if(max_index[0].size > 1):
-            random = Value_0_N(max_index[0].size-1)
-            index = max_index[0][random]
-        else:
-           index = max_index[0]
-        
-        ## eliminamos 
-        fitnes = np.delete(fitnes, index)
-        poblation = np.delete(poblation, index, axis=0)
-  
-       
-    print(poblation)
-    return poblation
     
 def rectification(test_list):
-
     ## valores repeditos  
     u, c = np.unique(test_list, return_counts=True)
     repetidos = u[c > 1]
@@ -150,23 +130,18 @@ def rectification(test_list):
         y = y[0]
         rango = y.size       
         for j in range(0,rango-1):
-            print(res) 
             ## seleccion posicion repetido al azar
             Select = Value_0_N(rango-1) 
             position = y[Select]
             y = np.delete(y ,Select)
             ## seleccionar valor faltante
-            indexRest = Value_0_N(len(res))
+            indexRest = Value_0_N(len(res)-1)
             valueRest = res[indexRest]
             res = np.delete(res ,indexRest)
             test_list[position] = valueRest
             print(test_list)
     return test_list
             
-test_list = np.array([1,2,3,3,4,5,5,6,6,6,10,10,9,7,8])
-
-
-
 def mutation(array):
     print("array entrada", array)
     index1 = Value_0_N(boardSize-1)
@@ -178,43 +153,33 @@ def mutation(array):
     print("array salida ", array)
     return array
 
-def adjustPoblation(maintainPob , childPob):
-    poblation = np.vstack((maintainPob,childPob))
-    for i in range(0, len(childPob-1)):
-        j = Value_0_N(0,len(poblation-1))
-        poblation = np.delete(poblation[j])
-    return poblation
+
 
 Poblacion = starterPob(populationSize,boardSize)
 iterations = 0
 FitnessPoblacion = arrayFitness(Poblacion)  
 
+
+
 while (0 in FitnessPoblacion) or (iterations < numIteration):
     descendencia = None
     FitnessPoblacion = arrayFitness(Poblacion)  
     ProbCruza = arrayProbCruza(FitnessPoblacion)     
-    for i in range(0,populationSize):
-        index_p1 = 0
-        index_p2 = 0
-        while index_p1 == index_p2:
-            prob = ValueRandom()
-            index_p1 = getIndexCruza(prob,ProbCruza)
-            prob = ValueRandom()
-            index_p2 = getIndexCruza(prob,ProbCruza)
-        cruza = cruzover(Poblacion[index_p1],Poblacion[index_p2])
-        if descendencia is None:
-            descendencia = cruza
-        else:
-            descendencia = np.concatenate((descendencia,cruza))
-        randomMutation = ValueRandom()
-        if randomMutation <= probMutation:
-            print(descendencia)
-            childMutate = Value_0_N(boardSize)
-            print(childMutate)
-            descendencia[childMutate] = mutation(descendencia[childMutate])
-            print(descendencia)
-        print(" ")
+    index_p1 = 0
+    index_p2 = 0
+    while index_p1 == index_p2:
+        prob = ValueRandom()
+        index_p1 = getIndexCruza(prob,ProbCruza)
+        prob = ValueRandom()
+        index_p2 = getIndexCruza(prob,ProbCruza)
+    cruza = cruzover(Poblacion[index_p1],Poblacion[index_p2])
+    print(cruza)
+    for i in range(0, np.size(cruza,0)):
+        cruza[i] = rectification(cruza[i])
+    print(cruza)
+
     iterations = iterations + 1
+
 
 
 
